@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/card";
 import { Search, Filter, Truck } from "lucide-react";
 
-// Mock data for demonstration
 const deliveryNotes = [
   {
     id: "BL001",
@@ -39,11 +38,11 @@ const deliveryNotes = [
     items: "Matériaux de construction",
     carrier: "Heavy Haulers Co.",
   },
-  // Add more mock data as needed
 ];
 
 const Index = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -109,12 +108,7 @@ const Index = () => {
                   <TableRow
                     key={note.id}
                     className="hover-scale cursor-pointer"
-                    onClick={() => {
-                      toast({
-                        title: "Ouverture du bon de livraison",
-                        description: `Les détails pour ${note.id} seront bientôt disponibles.`,
-                      });
-                    }}
+                    onClick={() => navigate(`/delivery-note/${note.id}`)}
                   >
                     <TableCell className="font-medium">{note.id}</TableCell>
                     <TableCell>{note.date}</TableCell>
