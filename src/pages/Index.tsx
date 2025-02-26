@@ -19,26 +19,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Search, Filter, Truck, Building, Plane } from "lucide-react";
+import { Search, Filter, Truck } from "lucide-react";
 
 // Mock data for demonstration
 const deliveryNotes = [
   {
-    id: "DN001",
-    date: "2024-03-15",
-    status: "In Transit",
-    type: "aerospace",
-    destination: "Hangar 7, Airport West",
-    items: "Aircraft Parts",
+    id: "BL001",
+    date: "15/03/2024",
+    status: "En Transit",
+    destination: "Hangar 7, Aéroport Ouest",
+    items: "Pièces d'avion",
     carrier: "Express Air Freight",
   },
   {
-    id: "DN002",
-    date: "2024-03-14",
-    status: "Delivered",
-    type: "construction",
-    destination: "Site B, Downtown Project",
-    items: "Construction Materials",
+    id: "BL002",
+    date: "14/03/2024",
+    status: "Livré",
+    destination: "Site B, Projet Centre-Ville",
+    items: "Matériaux de construction",
     carrier: "Heavy Haulers Co.",
   },
   // Add more mock data as needed
@@ -51,9 +49,9 @@ const Index = () => {
   return (
     <div className="min-h-screen p-6 space-y-6 bg-gradient-to-b from-blue-50 to-white">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Delivery Notes Hub</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Centre des Bons de Livraison</h1>
         <p className="text-muted-foreground">
-          Manage and track your delivery notes for aerospace and construction projects
+          Gérez et suivez vos bons de livraison pour les projets aérospatiaux et de construction
         </p>
       </header>
 
@@ -61,19 +59,19 @@ const Index = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <CardTitle>Recent Delivery Notes</CardTitle>
-              <CardDescription>View and manage your latest deliveries</CardDescription>
+              <CardTitle>Bons de Livraison Récents</CardTitle>
+              <CardDescription>Consultez et gérez vos dernières livraisons</CardDescription>
             </div>
             <Button
               onClick={() => {
                 toast({
-                  title: "Creating new delivery note",
-                  description: "This feature will be available soon.",
+                  title: "Création d'un nouveau bon de livraison",
+                  description: "Cette fonctionnalité sera bientôt disponible.",
                 });
               }}
               className="bg-primary hover:bg-primary/90"
             >
-              Create New
+              Créer Nouveau
             </Button>
           </div>
         </CardHeader>
@@ -82,7 +80,7 @@ const Index = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search delivery notes..."
+                placeholder="Rechercher des bons de livraison..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -90,7 +88,7 @@ const Index = () => {
             </div>
             <Button variant="outline" className="flex gap-2">
               <Filter className="h-4 w-4" />
-              Filters
+              Filtres
             </Button>
           </div>
 
@@ -98,13 +96,12 @@ const Index = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
+                  <TableHead>N° BL</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Type</TableHead>
+                  <TableHead>Statut</TableHead>
                   <TableHead>Destination</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Carrier</TableHead>
+                  <TableHead>Articles</TableHead>
+                  <TableHead>Transporteur</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -114,8 +111,8 @@ const Index = () => {
                     className="hover-scale cursor-pointer"
                     onClick={() => {
                       toast({
-                        title: "Opening delivery note",
-                        description: `Details for ${note.id} will be available soon.`,
+                        title: "Ouverture du bon de livraison",
+                        description: `Les détails pour ${note.id} seront bientôt disponibles.`,
                       });
                     }}
                   >
@@ -123,21 +120,11 @@ const Index = () => {
                     <TableCell>{note.date}</TableCell>
                     <TableCell>
                       <Badge
-                        variant={note.status === "Delivered" ? "default" : "secondary"}
+                        variant={note.status === "Livré" ? "default" : "secondary"}
                         className="capitalize"
                       >
                         {note.status}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {note.type === "aerospace" ? (
-                          <Plane className="h-4 w-4 text-blue-500" />
-                        ) : (
-                          <Building className="h-4 w-4 text-orange-500" />
-                        )}
-                        <span className="capitalize">{note.type}</span>
-                      </div>
                     </TableCell>
                     <TableCell>{note.destination}</TableCell>
                     <TableCell>{note.items}</TableCell>
