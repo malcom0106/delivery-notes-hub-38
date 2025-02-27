@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex-1 text-center font-bold">Sdemat</div>
+          <div className="flex-1 text-center font-bold">SDemat</div>
         </div>
       )}
 
@@ -53,7 +53,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
             {isOpen && (
               <Link to="/" className="flex items-center space-x-2">
                 <Truck className="h-6 w-6 text-primary" />
-                <span className="font-bold">Sdemat</span>
+                <span className="font-bold">SDemat</span>
               </Link>
             )}
             {(!isMobile || isOpen) && (
