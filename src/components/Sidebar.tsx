@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,11 @@ import {
   ChevronRight, 
   Home, 
   Truck, 
-  ClipboardList,
   Settings,
-  Map,
   BarChart,
   Users,
-  Menu
+  Menu,
+  Ship
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -86,17 +84,17 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 isOpen={isOpen} 
               />
               <NavItem 
-                to="/orders" 
-                icon={<ClipboardList className="h-5 w-5" />} 
-                label="Commandes" 
-                isActive={location.pathname.includes("/orders")} 
+                to="/trucks" 
+                icon={<Truck className="h-5 w-5" />} 
+                label="Camions" 
+                isActive={location.pathname.includes("/trucks")} 
                 isOpen={isOpen} 
               />
               <NavItem 
-                to="/map" 
-                icon={<Map className="h-5 w-5" />} 
-                label="Carte" 
-                isActive={location.pathname.includes("/map")} 
+                to="/carriers" 
+                icon={<Ship className="h-5 w-5" />} 
+                label="Transporteurs" 
+                isActive={location.pathname.includes("/carriers")} 
                 isOpen={isOpen} 
               />
               <NavItem 
