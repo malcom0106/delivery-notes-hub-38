@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,10 +78,10 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 isOpen={isOpen} 
               />
               <NavItem 
-                to="/deliveries" 
-                icon={<Truck className="h-5 w-5" />} 
-                label="Livraisons" 
-                isActive={location.pathname.includes("/delivery")} 
+                to="/carriers" 
+                icon={<Ship className="h-5 w-5" />} 
+                label="Transporteurs" 
+                isActive={location.pathname.includes("/carriers")} 
                 isOpen={isOpen} 
               />
               <NavItem 
@@ -91,16 +92,9 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 isOpen={isOpen} 
               />
               <NavItem 
-                to="/carriers" 
-                icon={<Ship className="h-5 w-5" />} 
-                label="Transporteurs" 
-                isActive={location.pathname.includes("/carriers")} 
-                isOpen={isOpen} 
-              />
-              <NavItem 
                 to="/analytics" 
                 icon={<BarChart className="h-5 w-5" />} 
-                label="Analytiques" 
+                label="Statistiques" 
                 isActive={location.pathname.includes("/analytics")} 
                 isOpen={isOpen} 
               />
