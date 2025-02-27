@@ -13,7 +13,8 @@ import {
   Settings,
   Map,
   BarChart,
-  Users
+  Users,
+  Menu
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -27,87 +28,114 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <aside 
-      className={`fixed left-0 top-0 z-30 h-screen bg-white border-r transition-all duration-300 ${
-        isOpen ? "w-64" : isMobile ? "w-0 -translate-x-full" : "w-20"
-      } overflow-hidden`}
-    >
-      <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between p-4">
-          {isOpen && (
-            <Link to="/" className="flex items-center space-x-2">
-              <Truck className="h-6 w-6 text-primary" />
-              <span className="font-bold">LogiTrack</span>
-            </Link>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`ml-auto`}
+    <>
+      {/* Mobile Navigation Bar - Always visible on mobile */}
+      {isMobile && (
+        <div className="fixed top-0 left-0 right-0 h-14 bg-white border-b z-40 flex items-center px-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
             onClick={toggleSidebar}
           >
-            {isOpen ? <ChevronLeft /> : <ChevronRight />}
+            <Menu className="h-5 w-5" />
           </Button>
+          <div className="flex-1 text-center font-bold">Sdemat</div>
         </div>
-        <Separator />
-        <ScrollArea className="flex-1">
-          <nav className="flex flex-col gap-1 p-2">
+      )}
+
+      {/* Sidebar - Collapsible on both mobile and desktop */}
+      <aside 
+        className={`fixed left-0 top-0 z-30 h-screen bg-white border-r transition-all duration-300 ${
+          isOpen ? "w-64" : isMobile ? "w-0 -translate-x-full" : "w-20"
+        } overflow-hidden ${isMobile ? "mt-14" : "mt-0"} ${isMobile ? "h-[calc(100vh-3.5rem)]" : "h-screen"}`}
+      >
+        <div className="h-full flex flex-col">
+          <div className="flex items-center justify-between p-4">
+            {isOpen && (
+              <Link to="/" className="flex items-center space-x-2">
+                <Truck className="h-6 w-6 text-primary" />
+                <span className="font-bold">Sdemat</span>
+              </Link>
+            )}
+            {(!isMobile || isOpen) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`ml-auto`}
+                onClick={toggleSidebar}
+              >
+                {isOpen ? <ChevronLeft /> : <ChevronRight />}
+              </Button>
+            )}
+          </div>
+          <Separator />
+          <ScrollArea className="flex-1">
+            <nav className="flex flex-col gap-1 p-2">
+              <NavItem 
+                to="/" 
+                icon={<Home className="h-5 w-5" />} 
+                label="Accueil" 
+                isActive={location.pathname === "/"} 
+                isOpen={isOpen} 
+              />
+              <NavItem 
+                to="/deliveries" 
+                icon={<Truck className="h-5 w-5" />} 
+                label="Livraisons" 
+                isActive={location.pathname.includes("/delivery")} 
+                isOpen={isOpen} 
+              />
+              <NavItem 
+                to="/orders" 
+                icon={<ClipboardList className="h-5 w-5" />} 
+                label="Commandes" 
+                isActive={location.pathname.includes("/orders")} 
+                isOpen={isOpen} 
+              />
+              <NavItem 
+                to="/map" 
+                icon={<Map className="h-5 w-5" />} 
+                label="Carte" 
+                isActive={location.pathname.includes("/map")} 
+                isOpen={isOpen} 
+              />
+              <NavItem 
+                to="/analytics" 
+                icon={<BarChart className="h-5 w-5" />} 
+                label="Analytiques" 
+                isActive={location.pathname.includes("/analytics")} 
+                isOpen={isOpen} 
+              />
+              <NavItem 
+                to="/users" 
+                icon={<Users className="h-5 w-5" />} 
+                label="Utilisateurs" 
+                isActive={location.pathname.includes("/users")} 
+                isOpen={isOpen} 
+              />
+            </nav>
+          </ScrollArea>
+          <Separator />
+          <div className="p-2">
             <NavItem 
-              to="/" 
-              icon={<Home className="h-5 w-5" />} 
-              label="Accueil" 
-              isActive={location.pathname === "/"} 
+              to="/settings" 
+              icon={<Settings className="h-5 w-5" />} 
+              label="Paramètres" 
+              isActive={location.pathname.includes("/settings")} 
               isOpen={isOpen} 
             />
-            <NavItem 
-              to="/deliveries" 
-              icon={<Truck className="h-5 w-5" />} 
-              label="Livraisons" 
-              isActive={location.pathname.includes("/delivery")} 
-              isOpen={isOpen} 
-            />
-            <NavItem 
-              to="/orders" 
-              icon={<ClipboardList className="h-5 w-5" />} 
-              label="Commandes" 
-              isActive={location.pathname.includes("/orders")} 
-              isOpen={isOpen} 
-            />
-            <NavItem 
-              to="/map" 
-              icon={<Map className="h-5 w-5" />} 
-              label="Carte" 
-              isActive={location.pathname.includes("/map")} 
-              isOpen={isOpen} 
-            />
-            <NavItem 
-              to="/analytics" 
-              icon={<BarChart className="h-5 w-5" />} 
-              label="Analytiques" 
-              isActive={location.pathname.includes("/analytics")} 
-              isOpen={isOpen} 
-            />
-            <NavItem 
-              to="/users" 
-              icon={<Users className="h-5 w-5" />} 
-              label="Utilisateurs" 
-              isActive={location.pathname.includes("/users")} 
-              isOpen={isOpen} 
-            />
-          </nav>
-        </ScrollArea>
-        <Separator />
-        <div className="p-2">
-          <NavItem 
-            to="/settings" 
-            icon={<Settings className="h-5 w-5" />} 
-            label="Paramètres" 
-            isActive={location.pathname.includes("/settings")} 
-            isOpen={isOpen} 
-          />
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+
+      {/* Mobile overlay backdrop when sidebar is open */}
+      {isMobile && isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-20"
+          onClick={toggleSidebar}
+        />
+      )}
+    </>
   );
 };
 

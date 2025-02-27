@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main 
         className={`flex-1 overflow-y-auto transition-all duration-300 ${
           sidebarOpen ? "md:ml-64" : isMobile ? "ml-0" : "ml-20"
-        }`}
+        } ${isMobile ? "mt-14" : "mt-0"}`}
       >
         {children}
       </main>
