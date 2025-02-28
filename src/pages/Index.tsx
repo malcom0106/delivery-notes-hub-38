@@ -49,7 +49,7 @@ const Index = () => {
   return (
     <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Centre des Bons de Livraison</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Bons de livraisons</h1>
         <p className="text-muted-foreground">
           Gérez et suivez vos bons de livraison pour les projets aérospatiaux et de construction
         </p>

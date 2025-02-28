@@ -1,175 +1,254 @@
 
 import { useParams, useNavigate } from "react-router-dom";
+import { 
+  ArrowLeft, 
+  Truck, 
+  Calendar, 
+  MapPin, 
+  Package, 
+  User, 
+  Phone, 
+  Mail,
+  FileText,
+  CheckCircle,
+  Clock
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+import { Badge } from "@/components/ui/badge";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
 } from "@/components/ui/card";
-import { ArrowLeft, Truck, Calendar, MapPin, FileText, User } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
-// Mock data for demonstration
-const getDeliveryNote = (id: string) => ({
-  id,
-  date: "15/03/2024",
-  client: "Aérotech Solutions",
-  project: "Hangar 7, Aéroport Ouest",
-  status: "En Transit",
-  carrier: "Express Air Freight",
-  vehicle: "CV258MN",
-  timelineEvents: [
-    { time: "10/01 19:00", label: "Production", type: "production" },
-    { time: "10/01 17:55", label: "Arrivée chantier réelle", type: "arrival" },
-    { time: "10/01 17:56", label: "Signature du client", type: "signature" },
-    { time: "10/01 17:56", label: "Départ chantier", type: "departure" },
-  ],
-  items: [
-    { quantity: "22.5", unit: "T", description: "Béton armé" },
-    { quantity: "1", unit: "U", description: "Transport" },
-  ],
-  signature: {
-    name: "Richard Test",
-    date: "10/01/2024 17:56",
-  }
-});
+// Données fictives
+const deliveryNotes = [
+  {
+    id: "BL001",
+    date: "15/03/2024",
+    status: "En Transit",
+    destination: "Hangar 7, Aéroport Ouest",
+    items: "Pièces d'avion",
+    carrier: "Express Air Freight",
+    client: "Aéronautiques Réunies",
+    clientContact: "Jean Dupont",
+    clientPhone: "+33 6 12 34 56 78",
+    clientEmail: "jean.dupont@aero.fr",
+    notes: "Livraison prévue avant 14h. Précautions particulières requises pour les composants sensibles.",
+    trackingNumber: "EXPR-9872-AIR",
+    driverName: "Marc Leblanc",
+    estimatedDelivery: "15/03/2024 14:00",
+  },
+  {
+    id: "BL002",
+    date: "14/03/2024",
+    status: "Livré",
+    destination: "Site B, Projet Centre-Ville",
+    items: "Matériaux de construction",
+    carrier: "Heavy Haulers Co.",
+    client: "Construction Urbaine SA",
+    clientContact: "Marie Martin",
+    clientPhone: "+33 6 98 76 54 32",
+    clientEmail: "marie.martin@construction.fr",
+    notes: "Signature requise par le chef de chantier uniquement.",
+    trackingNumber: "HHC-4567-CON",
+    driverName: "Pierre Dubois",
+    deliveryDate: "14/03/2024 11:23",
+  },
+];
 
 const DeliveryNoteDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const note = getDeliveryNote(id || "");
-
+  
+  // Recherche du bon de livraison
+  const deliveryNote = deliveryNotes.find(note => note.id === id);
+  
+  if (!deliveryNote) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl font-bold">Bon de livraison introuvable</h2>
+              <p className="text-muted-foreground">Le bon de livraison n°{id} n'existe pas</p>
+              <Button onClick={() => navigate('/')}>
+                Retour à la liste
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
   return (
-    <div className="min-h-screen p-6 space-y-6 bg-gradient-to-b from-blue-50 to-white">
-      <Button
-        variant="ghost"
-        className="gap-2"
-        onClick={() => navigate("/")}
-      >
-        <ArrowLeft className="h-4 w-4" /> Retour
-      </Button>
-
-      <div className="space-y-6">
-        <header className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight">Bon de Livraison {note.id}</h1>
-            <p className="text-sm text-muted-foreground">
-              Dernière mise à jour le {note.signature.date}
-            </p>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <User className="h-5 w-5 text-blue-500" />
-                Informations Client
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Client</p>
-                <p className="font-medium">{note.client}</p>
+    <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">Bon de Livraison #{deliveryNote.id}</h1>
+        <Badge 
+          variant={deliveryNote.status === "Livré" ? "default" : "secondary"}
+          className="ml-2"
+        >
+          {deliveryNote.status}
+        </Badge>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Détails principaux */}
+        <Card className="md:col-span-2 glass-card">
+          <CardHeader>
+            <CardTitle>Informations Générales</CardTitle>
+            <CardDescription>Détails du bon de livraison</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-2">
+                <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Date d'émission</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.date}</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Projet</p>
-                <p className="font-medium">{note.project}</p>
+              
+              <div className="flex items-start gap-2">
+                <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Destination</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.destination}</p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Truck className="h-5 w-5 text-blue-500" />
-                Informations Transport
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Transporteur</p>
-                <p className="font-medium">{note.carrier}</p>
+              
+              <div className="flex items-start gap-2">
+                <Package className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Articles</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.items}</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Immatriculation</p>
-                <p className="font-medium">{note.vehicle}</p>
+              
+              <div className="flex items-start gap-2">
+                <Truck className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Transporteur</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.carrier}</p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-500" />
-                Temps de livraison
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative">
-                {note.timelineEvents.map((event, index) => (
-                  <div
-                    key={event.time}
-                    className="mb-8 flex gap-4 items-start"
-                  >
-                    <div className="flex h-2 w-2 rounded-full bg-blue-500 mt-2">
-                      {index < note.timelineEvents.length - 1 && (
-                        <div className="absolute w-0.5 bg-blue-200 h-8 left-1 top-4" />
-                      )}
-                    </div>
+              
+              <div className="flex items-start gap-2">
+                <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">N° Tracking</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.trackingNumber}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-2">
+                <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Chauffeur</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.driverName}</p>
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div>
+              <h3 className="text-sm font-medium mb-2">Notes</h3>
+              <p className="text-sm text-muted-foreground p-3 bg-gray-50 rounded-md">
+                {deliveryNote.notes}
+              </p>
+            </div>
+            
+            <Separator />
+            
+            <div>
+              <h3 className="text-sm font-medium mb-2">Statut de livraison</h3>
+              <div className="flex items-center gap-2">
+                {deliveryNote.status === "Livré" ? (
+                  <>
+                    <CheckCircle className="h-5 w-5 text-green-500" />
                     <div>
-                      <p className="font-medium">{event.label}</p>
-                      <p className="text-sm text-muted-foreground">{event.time}</p>
+                      <p className="text-sm font-medium text-green-600">Livré</p>
+                      <p className="text-xs text-muted-foreground">
+                        Le {deliveryNote.deliveryDate}
+                      </p>
                     </div>
-                  </div>
-                ))}
+                  </>
+                ) : (
+                  <>
+                    <Clock className="h-5 w-5 text-amber-500" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-600">En transit</p>
+                      <p className="text-xs text-muted-foreground">
+                        Livraison estimée: {deliveryNote.estimatedDelivery}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-500" />
-                Liste des produits commandés
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b text-sm text-muted-foreground">
-                    <th className="text-left py-2">Quantité</th>
-                    <th className="text-left py-2">Unité</th>
-                    <th className="text-left py-2">Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {note.items.map((item, index) => (
-                    <tr key={index} className="border-b last:border-0">
-                      <td className="py-3">{item.quantity}</td>
-                      <td className="py-3">{item.unit}</td>
-                      <td className="py-3">{item.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </CardContent>
-          </Card>
-
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-500" />
-                Carte de la livraison
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] rounded-lg bg-gray-100 flex items-center justify-center">
-                <p className="text-muted-foreground">Carte en cours de chargement...</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Informations du client */}
+        <Card className="glass-card">
+          <CardHeader>
+            <CardTitle>Informations Client</CardTitle>
+            <CardDescription>Détails du destinataire</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium">Entreprise</p>
+                <p className="text-sm">{deliveryNote.client}</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              
+              <div className="flex items-start gap-2">
+                <User className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Contact</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.clientContact}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-2">
+                <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Téléphone</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.clientPhone}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-2">
+                <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Email</p>
+                  <p className="text-sm text-muted-foreground">{deliveryNote.clientEmail}</p>
+                </div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="pt-2">
+              <Button className="w-full" variant="outline">
+                Contacter le client
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
