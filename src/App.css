@@ -1,8 +1,9 @@
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .logo {
@@ -39,4 +40,21 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Animation pour les éléments du tableau */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.01);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Style pour les cartes transparentes */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }

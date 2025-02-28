@@ -78,7 +78,7 @@ const Carriers = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container mx-auto py-6 px-4 md:px-6">
+    <div className="h-full w-full p-6 bg-gray-50">
       <h1 className="text-2xl font-bold mb-6">Transporteurs</h1>
       
       <div className="bg-white rounded-lg shadow-sm border p-6">

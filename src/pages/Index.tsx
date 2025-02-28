@@ -47,7 +47,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <div className="min-h-screen p-6 space-y-6 bg-gradient-to-b from-blue-50 to-white">
+    <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Centre des Bons de Livraison</h1>
         <p className="text-muted-foreground">
