@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Table, 
   TableBody, 
@@ -10,7 +11,14 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, Plus, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Carrier {
   id: string;
@@ -59,9 +67,50 @@ const CARRIERS_DATA: Carrier[] = [
     reference: "TRANSPC", 
     type: "Transporteur" 
   },
+  { 
+    id: "7", 
+    name: "Express Air Freight", 
+    reference: "EAF2024", 
+    type: "Transporteur",
+    email: "contact@expressair.com"
+  },
+  { 
+    id: "8", 
+    name: "Heavy Haulers Co.", 
+    reference: "HHC2024", 
+    type: "Transporteur",
+    email: "info@heavyhaulers.com"
+  },
+  { 
+    id: "9", 
+    name: "Rapid Transport", 
+    reference: "RAPID01", 
+    type: "Transporteur" 
+  },
+  { 
+    id: "10", 
+    name: "Global Logistics", 
+    reference: "GL2024", 
+    type: "Transporteur",
+    email: "contact@globallogistics.com"
+  },
+  { 
+    id: "11", 
+    name: "City Deliveries", 
+    reference: "CITY2024", 
+    type: "Transporteur" 
+  },
+  { 
+    id: "12", 
+    name: "International Freight", 
+    reference: "INTL2024", 
+    type: "Transporteur",
+    email: "support@intlfreight.com"
+  },
 ];
 
 const Carriers = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -75,114 +124,102 @@ const Carriers = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredCarriers.slice(indexOfFirstItem, indexOfLastItem);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const handleCarrierClick = (carrierId: string) => {
+    navigate(`/carrier/${carrierId}`);
+  };
 
   return (
-    <div className="h-full w-full p-6 bg-gray-50">
-      <h1 className="text-2xl font-bold mb-6">Transporteurs</h1>
+    <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Transporteurs</h1>
+        <p className="text-muted-foreground">
+          Gérez vos transporteurs et leurs informations
+        </p>
+      </header>
       
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <div className="relative mb-6">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle>Liste des Transporteurs</CardTitle>
+              <CardDescription>
+                {filteredCarriers.length} transporteurs enregistrés
+              </CardDescription>
+            </div>
+            <Button className="bg-primary hover:bg-primary/90">
+              <Plus className="mr-2 h-4 w-4" />
+              Ajouter un transporteur
+            </Button>
           </div>
-          <Input
-            type="text"
-            placeholder="Chercher un transporteur"
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-sm text-gray-500">
-            {filteredCarriers.length}/{CARRIERS_DATA.length} résultats
-          </p>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            Ajouter un chauffeur
-          </Button>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Actions</TableHead>
-                <TableHead>Nom</TableHead>
-                <TableHead>Référence</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Emails</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentItems.map((carrier) => (
-                <TableRow key={carrier.id}>
-                  <TableCell>
-                    <div className="flex gap-2 text-blue-600">
-                      <a href="#" className="text-xs hover:underline">Voir les BL</a>
-                      <span className="text-gray-300">|</span>
-                      <a href="#" className="text-xs hover:underline">Voir les détails</a>
-                    </div>
-                  </TableCell>
-                  <TableCell>{carrier.name}</TableCell>
-                  <TableCell className="text-gray-600 text-sm font-mono">{carrier.reference}</TableCell>
-                  <TableCell>{carrier.type}</TableCell>
-                  <TableCell className="text-blue-600">{carrier.email}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        
-        <div className="flex justify-between items-center mt-4">
-          <div className="text-sm text-gray-500">
-            {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredCarriers.length)} sur {filteredCarriers.length}
+        </CardHeader>
+        <CardContent>
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Chercher un transporteur"
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           
-          <div className="flex items-center gap-2">
-            <span className="text-sm">Par page:</span>
-            <select className="border rounded px-2 py-1 text-sm">
-              <option>20</option>
-            </select>
-            
-            <div className="flex gap-1">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => paginate(1)} 
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Emails</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentItems.map((carrier) => (
+                  <TableRow 
+                    key={carrier.id} 
+                    className="hover-scale cursor-pointer"
+                    onClick={() => handleCarrierClick(carrier.id)}
+                  >
+                    <TableCell className="font-medium">{carrier.name}</TableCell>
+                    <TableCell className="text-gray-600 text-sm font-mono">{carrier.reference}</TableCell>
+                    <TableCell>{carrier.type}</TableCell>
+                    <TableCell className="text-blue-600">{carrier.email}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-sm text-gray-500">
+              Affichage de {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredCarriers.length)} sur {filteredCarriers.length} transporteurs
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
-                &lt;&lt;
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => paginate(currentPage - 1)} 
-                disabled={currentPage === 1}
-              >
-                &lt;
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => paginate(currentPage + 1)} 
+              <span className="text-sm">
+                Page {currentPage} sur {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
-                &gt;
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={() => paginate(totalPages)} 
-                disabled={currentPage === totalPages}
-              >
-                &gt;&gt;
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

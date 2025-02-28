@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter } from "lucide-react";
+import { Search, Plus, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -35,10 +35,21 @@ const USERS_DATA: User[] = [
   { id: "4", firstName: "Sophie", lastName: "Lefevre", email: "sophie.lefevre@sdemat.fr", isAdmin: true },
   { id: "5", firstName: "Thomas", lastName: "Moreau", email: "thomas.moreau@sdemat.fr", isAdmin: false },
   { id: "6", firstName: "Clara", lastName: "Bernard", email: "clara.bernard@sdemat.fr", isAdmin: false },
+  { id: "7", firstName: "Lucas", lastName: "Dubois", email: "lucas.dubois@sdemat.fr", isAdmin: false },
+  { id: "8", firstName: "Emma", lastName: "Petit", email: "emma.petit@sdemat.fr", isAdmin: false },
+  { id: "9", firstName: "Hugo", lastName: "Rousseau", email: "hugo.rousseau@sdemat.fr", isAdmin: true },
+  { id: "10", firstName: "Chloé", lastName: "Girard", email: "chloe.girard@sdemat.fr", isAdmin: false },
+  { id: "11", firstName: "Léo", lastName: "Roux", email: "leo.roux@sdemat.fr", isAdmin: false },
+  { id: "12", firstName: "Manon", lastName: "Vincent", email: "manon.vincent@sdemat.fr", isAdmin: false },
+  { id: "13", firstName: "Jules", lastName: "Faure", email: "jules.faure@sdemat.fr", isAdmin: true },
+  { id: "14", firstName: "Inès", lastName: "Andre", email: "ines.andre@sdemat.fr", isAdmin: false },
+  { id: "15", firstName: "Louis", lastName: "Mercier", email: "louis.mercier@sdemat.fr", isAdmin: false }
 ];
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
   
   const filteredUsers = USERS_DATA.filter(
     user => 
@@ -46,6 +57,11 @@ const Users = () => {
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
   return (
     <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
@@ -100,7 +116,7 @@ const Users = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
+                {currentItems.map((user) => (
                   <TableRow key={user.id} className="hover-scale">
                     <TableCell className="font-medium">{user.lastName}</TableCell>
                     <TableCell>{user.firstName}</TableCell>
@@ -117,6 +133,34 @@ const Users = () => {
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-sm text-gray-500">
+              Affichage de {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredUsers.length)} sur {filteredUsers.length} utilisateurs
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">
+                Page {currentPage} sur {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
