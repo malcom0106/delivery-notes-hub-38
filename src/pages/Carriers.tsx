@@ -11,14 +11,25 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface Carrier {
   id: string;
@@ -111,11 +122,19 @@ const CARRIERS_DATA: Carrier[] = [
 
 const Carriers = () => {
   const navigate = useNavigate();
+  const [carriers, setCarriers] = useState<Carrier[]>(CARRIERS_DATA);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const [open, setOpen] = useState(false);
+  const [newCarrier, setNewCarrier] = useState<Omit<Carrier, 'id'>>({
+    name: "",
+    reference: "",
+    type: "Transporteur",
+    email: ""
+  });
 
-  const filteredCarriers = CARRIERS_DATA.filter(
+  const filteredCarriers = carriers.filter(
     carrier => carrier.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -126,6 +145,42 @@ const Carriers = () => {
 
   const handleCarrierClick = (carrierId: string) => {
     navigate(`/carrier/${carrierId}`);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewCarrier(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAddCarrier = () => {
+    // Vérification que les champs obligatoires sont remplis
+    if (!newCarrier.name || !newCarrier.reference) {
+      return;
+    }
+
+    // Génération d'un nouvel ID
+    const newId = (carriers.length + 1).toString();
+
+    // Ajout du transporteur à la liste
+    const carrierToAdd: Carrier = {
+      id: newId,
+      ...newCarrier
+    };
+
+    setCarriers(prev => [carrierToAdd, ...prev]);
+    
+    // Réinitialisation du formulaire
+    setNewCarrier({
+      name: "",
+      reference: "",
+      type: "Transporteur",
+      email: ""
+    });
+    
+    setOpen(false);
   };
 
   return (
@@ -146,10 +201,73 @@ const Carriers = () => {
                 {filteredCarriers.length} transporteurs enregistrés
               </CardDescription>
             </div>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="mr-2 h-4 w-4" />
-              Ajouter un transporteur
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Ajouter un transporteur
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un transporteur</DialogTitle>
+                  <DialogDescription>
+                    Remplissez les informations pour créer un nouveau transporteur
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Nom</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="Nom du transporteur"
+                      value={newCarrier.name}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="reference">Référence</Label>
+                    <Input
+                      id="reference"
+                      name="reference"
+                      placeholder="Référence unique"
+                      value={newCarrier.reference}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="type">Type</Label>
+                    <Input
+                      id="type"
+                      name="type"
+                      placeholder="Type de transporteur"
+                      value={newCarrier.type}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Email du transporteur"
+                      value={newCarrier.email}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <DialogFooter className="sm:justify-between">
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button type="submit" onClick={handleAddCarrier}>
+                    Ajouter le transporteur
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
         <CardContent>

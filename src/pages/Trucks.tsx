@@ -19,6 +19,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Truck {
   id: string;
@@ -52,12 +69,42 @@ const TRUCKS_DATA: Truck[] = [
   { id: "20", licensePlate: "YZ-890-AB", label: "Camion 20", type: "Citerne", status: "Indisponible", carrier: "CARR TEST TRANS" },
 ];
 
+const CARRIERS = [
+  "Express Air Freight",
+  "Heavy Haulers Co.",
+  "Transport SIM",
+  "MARTEL",
+  "CARR TEST TRANS",
+  "Rapid Transport",
+  "Global Logistics",
+  "City Deliveries",
+  "International Freight"
+];
+
+const TRUCK_TYPES = [
+  "Semi-remorque",
+  "Porteur",
+  "Benne",
+  "Frigorifique",
+  "Citerne"
+];
+
 const Trucks = () => {
+  const [trucks, setTrucks] = useState<Truck[]>(TRUCKS_DATA);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [open, setOpen] = useState(false);
   
-  const filteredTrucks = TRUCKS_DATA.filter(
+  const [newTruck, setNewTruck] = useState<Omit<Truck, 'id'>>({
+    licensePlate: "",
+    label: "",
+    type: "",
+    status: "Actif",
+    carrier: ""
+  });
+  
+  const filteredTrucks = trucks.filter(
     truck => 
       truck.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
       truck.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,6 +116,64 @@ const Trucks = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredTrucks.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredTrucks.length / itemsPerPage);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewTruck(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleStatusChange = (value: "Actif" | "En maintenance" | "Indisponible") => {
+    setNewTruck(prev => ({
+      ...prev,
+      status: value
+    }));
+  };
+
+  const handleTypeChange = (value: string) => {
+    setNewTruck(prev => ({
+      ...prev,
+      type: value
+    }));
+  };
+
+  const handleCarrierChange = (value: string) => {
+    setNewTruck(prev => ({
+      ...prev,
+      carrier: value
+    }));
+  };
+
+  const handleAddTruck = () => {
+    // Vérification que les champs obligatoires sont remplis
+    if (!newTruck.licensePlate || !newTruck.label || !newTruck.type || !newTruck.carrier) {
+      return;
+    }
+
+    // Génération d'un nouvel ID
+    const newId = (trucks.length + 1).toString();
+
+    // Ajout du camion à la liste
+    const truckToAdd: Truck = {
+      id: newId,
+      ...newTruck
+    };
+
+    setTrucks(prev => [truckToAdd, ...prev]);
+    
+    // Réinitialisation du formulaire
+    setNewTruck({
+      licensePlate: "",
+      label: "",
+      type: "",
+      status: "Actif",
+      carrier: ""
+    });
+    
+    setOpen(false);
+  };
 
   return (
     <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
@@ -88,10 +193,98 @@ const Trucks = () => {
                 {filteredTrucks.length} camions enregistrés
               </CardDescription>
             </div>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="mr-2 h-4 w-4" />
-              Ajouter un camion
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Ajouter un camion
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un camion</DialogTitle>
+                  <DialogDescription>
+                    Remplissez les informations pour créer un nouveau camion
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="licensePlate">Plaque d'immatriculation</Label>
+                    <Input
+                      id="licensePlate"
+                      name="licensePlate"
+                      placeholder="AB-123-CD"
+                      value={newTruck.licensePlate}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="label">Libellé</Label>
+                    <Input
+                      id="label"
+                      name="label"
+                      placeholder="Nom du camion"
+                      value={newTruck.label}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="type">Type</Label>
+                    <Select onValueChange={handleTypeChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TRUCK_TYPES.map(type => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="status">Statut</Label>
+                    <Select 
+                      defaultValue="Actif"
+                      onValueChange={(value) => handleStatusChange(value as "Actif" | "En maintenance" | "Indisponible")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Statut du camion" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Actif">Actif</SelectItem>
+                        <SelectItem value="En maintenance">En maintenance</SelectItem>
+                        <SelectItem value="Indisponible">Indisponible</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="carrier">Transporteur</Label>
+                    <Select onValueChange={handleCarrierChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un transporteur" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CARRIERS.map(carrier => (
+                          <SelectItem key={carrier} value={carrier}>
+                            {carrier}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <DialogFooter className="sm:justify-between">
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button type="submit" onClick={handleAddTruck}>
+                    Ajouter le camion
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
         <CardContent>
@@ -131,13 +324,13 @@ const Trucks = () => {
                     <TableCell>{truck.type}</TableCell>
                     <TableCell>
                       <Badge 
-                        variant={
-                          truck.status === "Actif" 
-                            ? "default" 
+                        className={`
+                          ${truck.status === "Actif" 
+                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200" 
                             : truck.status === "En maintenance" 
-                              ? "secondary" 
-                              : "destructive"
-                        }
+                              ? "bg-amber-100 text-amber-800 hover:bg-amber-200" 
+                              : "bg-red-100 text-red-800 hover:bg-red-200"}
+                        `}
                       >
                         {truck.status}
                       </Badge>

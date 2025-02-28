@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +19,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Search, Filter, Truck, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Search, Filter, Truck, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const deliveryNotes = [
   { id: "BL001", date: "15/03/2024", status: "En Transit", destination: "Hangar 7, Aéroport Ouest", items: "Pièces d'avion", carrier: "Express Air Freight" },
@@ -55,20 +67,29 @@ const deliveryNotes = [
   { id: "BL030", date: "14/02/2024", status: "En Transit", destination: "Jardin Botanique", items: "Système d'irrigation", carrier: "CARR TEST TRANS" },
 ];
 
+const statusOptions = [
+  { value: "all", label: "Tous les statuts" },
+  { value: "Livré", label: "Livré" },
+  { value: "En Transit", label: "En Transit" },
+  { value: "Annulé", label: "Annulé" },
+];
+
 const Index = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Filtrer les bons de livraison selon la recherche
+  // Filtrer les bons de livraison selon la recherche et le statut
   const filteredDeliveryNotes = deliveryNotes.filter(
     note =>
-      note.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.items.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.carrier.toLowerCase().includes(searchQuery.toLowerCase())
+      (searchQuery === "" || 
+        note.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.items.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.carrier.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (statusFilter === "all" || note.status === statusFilter)
   );
 
   // Calculer les indices pour la pagination
@@ -93,17 +114,6 @@ const Index = () => {
               <CardTitle>Bons de Livraison Récents</CardTitle>
               <CardDescription>Consultez et gérez vos dernières livraisons</CardDescription>
             </div>
-            <Button
-              onClick={() => {
-                toast({
-                  title: "Création d'un nouveau bon de livraison",
-                  description: "Cette fonctionnalité sera bientôt disponible.",
-                });
-              }}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Créer Nouveau
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -117,10 +127,48 @@ const Index = () => {
                 className="pl-9"
               />
             </div>
-            <Button variant="outline" className="flex gap-2">
-              <Filter className="h-4 w-4" />
-              Filtres
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="flex gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filtres
+                  {statusFilter !== "all" && (
+                    <Badge className="ml-1 bg-blue-100 text-blue-800">
+                      {statusFilter}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-0" align="end">
+                <Command>
+                  <CommandInput placeholder="Filtrer par statut..." />
+                  <CommandList>
+                    <CommandEmpty>Aucun résultat.</CommandEmpty>
+                    <CommandGroup>
+                      {statusOptions.map((status) => (
+                        <CommandItem
+                          key={status.value}
+                          value={status.value}
+                          onSelect={(value) => {
+                            setStatusFilter(value);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          <Check
+                            className={`mr-2 h-4 w-4 ${
+                              statusFilter === status.value 
+                                ? "opacity-100" 
+                                : "opacity-0"
+                            }`}
+                          />
+                          {status.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="rounded-lg border">
@@ -146,14 +194,13 @@ const Index = () => {
                     <TableCell>{note.date}</TableCell>
                     <TableCell>
                       <Badge
-                        variant={
-                          note.status === "Livré" 
-                            ? "default" 
+                        className={`
+                          ${note.status === "Livré" 
+                            ? "bg-green-100 text-green-800 hover:bg-green-200" 
                             : note.status === "Annulé" 
-                              ? "destructive" 
-                              : "secondary"
-                        }
-                        className="capitalize"
+                              ? "bg-red-100 text-red-800 hover:bg-red-200" 
+                              : "bg-orange-100 text-orange-800 hover:bg-orange-200"}
+                        `}
                       >
                         {note.status}
                       </Badge>
