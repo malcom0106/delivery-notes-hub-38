@@ -196,10 +196,10 @@ const Index = () => {
                       <Badge
                         className={`
                           ${note.status === "Livré" 
-                            ? "bg-green-100 text-green-800 hover:bg-green-200" 
+                            ? "bg-teal-100 text-teal-800 hover:bg-teal-200" 
                             : note.status === "Annulé" 
-                              ? "bg-red-100 text-red-800 hover:bg-red-200" 
-                              : "bg-orange-100 text-orange-800 hover:bg-orange-200"}
+                              ? "bg-rose-100 text-rose-800 hover:bg-rose-200" 
+                              : "bg-amber-100 text-amber-800 hover:bg-amber-200"}
                         `}
                       >
                         {note.status}

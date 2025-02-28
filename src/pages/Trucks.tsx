@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Table, 
   TableBody, 
@@ -90,6 +91,7 @@ const TRUCK_TYPES = [
 ];
 
 const Trucks = () => {
+  const navigate = useNavigate();
   const [trucks, setTrucks] = useState<Truck[]>(TRUCKS_DATA);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,6 +175,10 @@ const Trucks = () => {
     });
     
     setOpen(false);
+  };
+
+  const handleTruckClick = (truckId: string) => {
+    navigate(`/truck/${truckId}`);
   };
 
   return (
@@ -318,7 +324,11 @@ const Trucks = () => {
               </TableHeader>
               <TableBody>
                 {currentItems.map((truck) => (
-                  <TableRow key={truck.id} className="hover-scale">
+                  <TableRow 
+                    key={truck.id} 
+                    className="hover-scale cursor-pointer"
+                    onClick={() => handleTruckClick(truck.id)}
+                  >
                     <TableCell className="font-medium">{truck.licensePlate}</TableCell>
                     <TableCell>{truck.label}</TableCell>
                     <TableCell>{truck.type}</TableCell>
@@ -326,9 +336,9 @@ const Trucks = () => {
                       <Badge 
                         className={`
                           ${truck.status === "Actif" 
-                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200" 
+                            ? "bg-purple-100 text-purple-800 hover:bg-purple-200" 
                             : truck.status === "En maintenance" 
-                              ? "bg-amber-100 text-amber-800 hover:bg-amber-200" 
+                              ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200" 
                               : "bg-red-100 text-red-800 hover:bg-red-200"}
                         `}
                       >
@@ -337,7 +347,16 @@ const Trucks = () => {
                     </TableCell>
                     <TableCell>{truck.carrier}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">Détails</Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTruckClick(truck.id);
+                        }}
+                      >
+                        Détails
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
