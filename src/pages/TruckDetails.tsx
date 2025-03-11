@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -6,7 +5,7 @@ import {
   FileText, 
   User, 
   Calendar,
-  Tool,
+  Wrench,
   Gauge,
   Building,
   MapPin,
@@ -15,16 +14,6 @@ import {
   AlertTriangle,
   Ban
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 interface TruckDetails {
   id: string;
@@ -136,7 +125,6 @@ const TRUCKS_DETAILS: TruckDetails[] = [
     fuelType: "Diesel",
     mileage: 156780
   },
-  // Ajout d'autres camions pour correspondre à tous les IDs de la page Trucks.tsx
   { id: "6", licensePlate: "UV-678-WX", label: "Camion 6", type: "Semi-remorque", status: "Actif", carrier: "Express Air Freight" },
   { id: "7", licensePlate: "YZ-901-AB", label: "Camion 7", type: "Porteur", status: "Actif", carrier: "Heavy Haulers Co." },
   { id: "8", licensePlate: "CD-234-EF", label: "Camion 8", type: "Benne", status: "En maintenance", carrier: "Transport SIM" },
@@ -158,7 +146,6 @@ const TruckDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // Recherche du camion
   const truck = TRUCKS_DETAILS.find(t => t.id === id);
   
   if (!truck) {
@@ -217,7 +204,6 @@ const TruckDetails = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Informations principales */}
         <Card className="md:col-span-2 glass-card">
           <CardHeader>
             <CardTitle>Informations Générales</CardTitle>
@@ -350,7 +336,6 @@ const TruckDetails = () => {
           </CardContent>
         </Card>
         
-        {/* Informations du chauffeur et statut */}
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>Statut et Assignation</CardTitle>
@@ -390,7 +375,7 @@ const TruckDetails = () => {
             
             <div className="pt-2 space-y-2">
               <Button className="w-full" variant="outline">
-                <Tool className="mr-2 h-4 w-4" />
+                <Wrench className="mr-2 h-4 w-4" />
                 Programmer une maintenance
               </Button>
               
