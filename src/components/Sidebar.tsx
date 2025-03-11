@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,12 +7,10 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Home, 
-  Truck, 
   Settings,
   BarChart,
   Users,
-  Menu,
-  Ship
+  Menu
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -28,7 +25,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile Navigation Bar - Always visible on mobile */}
+      {/* Mobile Navigation Bar */}
       {isMobile && (
         <div className="fixed top-0 left-0 right-0 h-14 bg-white border-b z-40 flex items-center px-4">
           <Button 
@@ -42,7 +39,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
         </div>
       )}
 
-      {/* Sidebar - Collapsible on both mobile and desktop */}
+      {/* Sidebar */}
       <aside 
         className={`fixed left-0 top-0 z-30 h-screen bg-white border-r transition-all duration-300 ${
           isOpen ? "w-64" : isMobile ? "w-0 -translate-x-full" : "w-20"
@@ -52,7 +49,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
           <div className="flex items-center justify-between p-4">
             {isOpen && (
               <Link to="/" className="flex items-center space-x-2">
-                <Truck className="h-6 w-6 text-primary" />
+                <Home className="h-6 w-6 text-primary" />
                 <span className="font-bold">SDemat</span>
               </Link>
             )}
@@ -75,20 +72,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 icon={<Home className="h-5 w-5" />} 
                 label="Accueil" 
                 isActive={location.pathname === "/"} 
-                isOpen={isOpen} 
-              />
-              <NavItem 
-                to="/carriers" 
-                icon={<Ship className="h-5 w-5" />} 
-                label="Transporteurs" 
-                isActive={location.pathname.includes("/carriers")} 
-                isOpen={isOpen} 
-              />
-              <NavItem 
-                to="/trucks" 
-                icon={<Truck className="h-5 w-5" />} 
-                label="Camions" 
-                isActive={location.pathname.includes("/trucks")} 
                 isOpen={isOpen} 
               />
               <NavItem 
@@ -120,7 +103,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
         </div>
       </aside>
 
-      {/* Mobile overlay backdrop when sidebar is open */}
+      {/* Mobile overlay backdrop */}
       {isMobile && isOpen && (
         <div 
           className="fixed inset-0 bg-black/20 z-20"
