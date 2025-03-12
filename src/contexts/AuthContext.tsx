@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import env from "@/config/environment";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,30 +25,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Vérifier l'authentification au chargement
-    const storedAuth = localStorage.getItem("isAuthenticated");
+  // Vérifier l'authentification en vérifiant la présence du cookie
+  const checkAuth = () => {
+    // La vérification se fait implicitement car le cookie est HttpOnly
+    // On vérifie l'email stocké localement en attendant
     const storedEmail = localStorage.getItem("userEmail");
     
-    if (storedAuth === "true" && storedEmail) {
+    if (storedEmail) {
       setIsAuthenticated(true);
       setUserEmail(storedEmail);
+      return true;
     }
+    return false;
+  };
+
+  useEffect(() => {
+    // Vérifier l'authentification au chargement
+    checkAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simulation d'une connexion - à remplacer par votre API réelle
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Dans une implémentation réelle, vous vérifieriez les identifiants
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("userEmail", email);
-    setIsAuthenticated(true);
-    setUserEmail(email);
+    try {
+      // Appel API réel pour la connexion
+      const response = await fetch(`${env.API_HOST}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include", // Important pour inclure les cookies
+      });
+
+      if (!response.ok) {
+        throw new Error("Identifiants incorrects");
+      }
+
+      // Le cookie accessToken est automatiquement stocké par le navigateur
+      // Stockons l'email pour référence
+      localStorage.setItem("userEmail", email);
+      setIsAuthenticated(true);
+      setUserEmail(email);
+      
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem("isAuthenticated");
+  const logout = async () => {
+    // Idéalement, on devrait appeler une API de déconnexion pour invalider le token
+    // Pour l'instant, on se contente de supprimer la référence locale
     localStorage.removeItem("userEmail");
     setIsAuthenticated(false);
     setUserEmail(null);
