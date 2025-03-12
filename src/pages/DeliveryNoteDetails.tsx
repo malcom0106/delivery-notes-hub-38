@@ -11,7 +11,8 @@ import {
   Mail,
   FileText,
   CheckCircle,
-  Clock
+  Clock,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,58 +24,84 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
-// Données fictives
-const deliveryNotes = [
-  {
-    id: "BL001",
-    date: "15/03/2024",
-    status: "En Transit",
-    destination: "Hangar 7, Aéroport Ouest",
-    items: "Pièces d'avion",
-    carrier: "Express Air Freight",
-    client: "Aéronautiques Réunies",
-    clientContact: "Jean Dupont",
-    clientPhone: "+33 6 12 34 56 78",
-    clientEmail: "jean.dupont@aero.fr",
-    notes: "Livraison prévue avant 14h. Précautions particulières requises pour les composants sensibles.",
-    trackingNumber: "EXPR-9872-AIR",
-    driverName: "Marc Leblanc",
-    estimatedDelivery: "15/03/2024 14:00",
-  },
-  {
-    id: "BL002",
-    date: "14/03/2024",
-    status: "Livré",
-    destination: "Site B, Projet Centre-Ville",
-    items: "Matériaux de construction",
-    carrier: "Heavy Haulers Co.",
-    client: "Construction Urbaine SA",
-    clientContact: "Marie Martin",
-    clientPhone: "+33 6 98 76 54 32",
-    clientEmail: "marie.martin@construction.fr",
-    notes: "Signature requise par le chef de chantier uniquement.",
-    trackingNumber: "HHC-4567-CON",
-    driverName: "Pierre Dubois",
-    deliveryDate: "14/03/2024 11:23",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDeliveryNote } from "@/services/deliveryNoteService";
 
 const DeliveryNoteDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // Recherche du bon de livraison
-  const deliveryNote = deliveryNotes.find(note => note.id === id);
+  // Utiliser notre hook personnalisé pour récupérer le bon de livraison
+  const { data: deliveryNote, isLoading, error } = useDeliveryNote(id);
   
-  if (!deliveryNote) {
+  // Afficher un état de chargement
+  if (isLoading) {
+    return (
+      <div className="h-full w-full bg-gradient-to-b from-blue-50 to-white p-6 space-y-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <Skeleton className="h-8 w-64" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="md:col-span-2 glass-card">
+            <CardHeader>
+              <Skeleton className="h-6 w-48 mb-2" />
+              <Skeleton className="h-4 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <Skeleton className="h-5 w-5 mt-0.5" />
+                    <div>
+                      <Skeleton className="h-4 w-24 mb-1" />
+                      <Skeleton className="h-3 w-36" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="glass-card">
+            <CardHeader>
+              <Skeleton className="h-6 w-40 mb-2" />
+              <Skeleton className="h-4 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <Skeleton className="h-5 w-5 mt-0.5" />
+                  <div>
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-3 w-36" />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  
+  // Afficher une erreur
+  if (error || !deliveryNote) {
     return (
       <div className="h-full w-full flex items-center justify-center">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
+              <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
               <h2 className="text-2xl font-bold">Bon de livraison introuvable</h2>
-              <p className="text-muted-foreground">Le bon de livraison n°{id} n'existe pas</p>
+              <p className="text-muted-foreground">Le bon de livraison n°{id} n'existe pas ou une erreur s'est produite</p>
               <Button onClick={() => navigate('/')}>
                 Retour à la liste
               </Button>
